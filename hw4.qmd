@@ -1,0 +1,22 @@
+---
+title: "hw4"
+author: "Manqing Lin"
+format:
+  html:
+    embed-resources: true
+editor: visual
+---
+
+## Problem1
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+```
+
+## Problem2
+
+```{r}
+#| code-fold: true
+#| code-summary: "Show the code"
+```
