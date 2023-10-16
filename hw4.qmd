@@ -14,6 +14,31 @@ editor: visual
 #| code-summary: "Show the code"
 ```
 
+```{r}
+#install.packages("nycflights13")
+#library(nycflights13)
+#library(tidyverse)
+#View(airports)
+#View(flights)
+
+```
+
+##a
+
+```{r}
+newflights<-flights%>%group_by(dest)%>%filter(n()>=10)%>%ungroup()
+
+df1<-newflights %>% group_by(origin) %>% summarize(mean_dep_delay = mean(dep_delay,na.rm = TRUE), median_dep_delay=median(dep_delay,na.rm = TRUE))
+
+df1
+```
+
+```{r}
+df2<-newflights %>% group_by(origin) %>% summarize(mean_arrive_delay = mean(arr_delay,na.rm = TRUE), median_arrive_delay=median(arr_delay,na.rm = TRUE))
+
+df2
+```
+
 ## Problem2
 
 ```{r}
