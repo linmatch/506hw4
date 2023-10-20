@@ -10,38 +10,96 @@ editor: visual
 ## Problem1
 
 ```{r}
-#| code-fold: true
-#| code-summary: "Show the code"
-```
-
-```{r}
 #install.packages("nycflights13")
-#library(nycflights13)
-#library(tidyverse)
+library(nycflights13)
+library(tidyverse)
 #View(airports)
 #View(flights)
-
+#View(planes)
 ```
 
 ##a
 
 ```{r}
-newflights<-flights%>%group_by(dest)%>%filter(n()>=10)%>%ungroup()
-
-df1<-newflights %>% group_by(origin) %>% summarize(mean_dep_delay = mean(dep_delay,na.rm = TRUE), median_dep_delay=median(dep_delay,na.rm = TRUE))
+df1<-flights %>% group_by(origin) %>% summarize(mean_dep_delay = mean(dep_delay,na.rm = TRUE), median_dep_delay=median(dep_delay,na.rm = TRUE))%>%arrange(desc(mean_dep_delay))
 
 df1
 ```
 
 ```{r}
-df2<-newflights %>% group_by(origin) %>% summarize(mean_arrive_delay = mean(arr_delay,na.rm = TRUE), median_arrive_delay=median(arr_delay,na.rm = TRUE))
+newflights<-flights%>%group_by(dest)%>%filter(n()>=10)%>%ungroup()
+
+df2<-newflights %>% group_by(origin) %>% summarize(mean_arrive_delay = mean(arr_delay,na.rm = TRUE), median_arrive_delay=median(arr_delay,na.rm = TRUE))%>%arrange(desc(mean_arrive_delay))
 
 df2
+```
+
+##b
+
+```{r}
+newdata<-merge(planes,flights, by="tailnum")
+
+df3<- newdata %>%group_by(model) %>%summarise(avg_speed = mean(distance / air_time * 60, na.rm = TRUE),num_flights = n())%>%arrange(desc(avg_speed))
+
+df3[1,]
 ```
 
 ## Problem2
 
 ```{r}
-#| code-fold: true
-#| code-summary: "Show the code"
+library(readr)
+nnmaps <- read_csv("~/Desktop/chicago-nmmaps.csv")
+View(nnmaps)
 ```
+
+```{r}
+##function that allow a user to get the average temperture for a given month
+get_temp <- function(month, year, data, celsius=FALSE, average_fn=mean){
+##get the corresponding data for a given month and year
+  row<-nnmaps%>%filter(month==month, year==year)
+##Check if the data is empty, if empty, then stop further execution
+  if(is_empty(row)){
+    stop("Data is not available for the given month and year")
+  }
+##get the average temperature for the given month and year
+  avg_temp<-row%>%summarise(avg_temp=average_fn(temp, na.rm = TRUE))%>%pull(avg_temp)
+##convert the temperature into celsius if TRUE  
+  if(celsius){
+    avg_temp<-(avg_temp-32)*(5/9)
+  }
+  
+  return(avg_temp)
+}
+```
+
+```{r}
+get_temp("Apr", 1999, data = nnmaps)
+```
+
+```{r}
+get_temp("Apr", 1999, data = nnmaps, celsius = TRUE)
+```
+
+```{r}
+get_temp(10, 1998, data = nnmaps, average_fn = median)
+```
+
+```{r}
+get_temp(13, 1998, data = nnmaps)
+```
+
+```{r}
+get_temp(2, 2005, data = nnmaps)
+```
+
+```{r}
+get_temp("November", 1999, data =nnmaps, celsius = TRUE,
+         average_fn = function(x) {
+           x %>% sort -> x
+           x[2:(length(x) - 1)] %>% mean %>% return
+         })
+```
+
+## Problem3
+
+## Problem4
